@@ -112,6 +112,8 @@ export class App {
     this.feedbackViewEl.$.submitButton.addEventListener('tap', this.submitFeedback.bind(this));
     this.rootEl.addEventListener('PrivacyTermsAcked', this.ackPrivacyTerms.bind(this));
     this.rootEl.addEventListener('SetLanguageRequested', this.setAppLanguage.bind(this));
+    this.rootEl.addEventListener('SetLoginRequested', this.setLoginUserInfo.bind(this));
+    this.rootEl.addEventListener('ShowToastInJS', this.showToastInJS.bind(this));
 
     // Register handlers for events published to our event queue.
     this.eventQueue.subscribe(events.ServerAdded, this.onServerAdded.bind(this));
@@ -241,6 +243,10 @@ export class App {
     this.changeToDefaultPage();
   }
 
+  private setLoginUserInfo(event: CustomEvent) {
+    this.changeToDefaultPage();
+  }
+
   private handleClipboardText(text: string) {
     // Shorten, sanitise.
     // Note that we always check the text, even if the contents are same as last time, because we
@@ -269,7 +275,7 @@ export class App {
 
   private requestAddServer(event: CustomEvent) {
     try {
-      this.serverRepo.add(event.detail.accessKey);
+      this.serverRepo.loginAdd(event.detail.accessKey,event.detail.name);
     } catch (err) {
       this.changeToDefaultPage();
       this.showLocalizedError(err);
@@ -336,7 +342,11 @@ export class App {
     const {serverId, newName} = event.detail;
     this.serverRepo.rename(serverId, newName);
   }
-
+  
+  private async showToastInJS(event: CustomEvent) {
+    const {text, duration} = event.detail;
+    this.rootEl.showToast(text,duration);
+  }
   private async connectServer(event: CustomEvent) {
     event.stopImmediatePropagation();
 
@@ -547,6 +557,7 @@ export class App {
       address: server.address,
       id: server.id,
       connectionState: ServerConnectionState.DISCONNECTED,
+      ping: '-1',
     };
   }
 
@@ -567,9 +578,25 @@ export class App {
   private syncConnectivityStateToServerCards() {
     for (const server of this.serverRepo.getAll()) {
       this.syncServerConnectivityState(server);
+      this.syncServerPing(server);
     }
   }
+  private async syncServerPing(server: Server) {
+    try {
+      let pingStartTime = Number(new Date());
+      let reachable = await server.checkReachable();
+      let pingEndTime = Number(new Date());
+      let ping = -1;
+      if(reachable){
+        ping = pingEndTime - pingStartTime;
+      }
+      console.log(pingEndTime - pingStartTime)
+      this.updateServerListItem(server.id, {ping: String(ping)});
 
+    } catch (e) {
+      console.error('Failed to sync server connectivity state', e);
+    }
+  }
   private async syncServerConnectivityState(server: Server) {
     try {
       const isRunning = await server.checkRunning();

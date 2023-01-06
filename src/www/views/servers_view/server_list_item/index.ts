@@ -32,6 +32,7 @@ export interface ServerListItem {
   address: string;
   id: string;
   name: string;
+  ping: string;
   connectionState: ServerConnectionState;
 }
 

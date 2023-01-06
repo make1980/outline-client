@@ -39,6 +39,7 @@ import '@polymer/paper-toast/paper-toast.js';
 import 'outline-i18n/index.js';
 import './about-view.js';
 import './add-server-view.js';
+import './login-view.js';
 import './feedback-view.js';
 import './language-view.js';
 import './licenses-view.js';
@@ -150,16 +151,18 @@ export class AppRoot extends mixinBehaviors([AppLocalizeBehavior], PolymerElemen
 
         #logo-nav {
           background-color: var(--dark-green);
-          text-align: center;
           height: 120px;
         }
 
         #logo {
-          width: 60px;
-          height: 60px;
-          margin-top: 30px;
+          width: 20px;
+          height: 20px;
+          margin: 20px;
+          display:inline-block;
         }
-
+        .userinfo-wrapper{
+          color:#fff;
+        }
         .nav-hr {
           background-color: #e0e0e0;
           height: 1px;
@@ -224,9 +227,9 @@ export class AppRoot extends mixinBehaviors([AppLocalizeBehavior], PolymerElemen
             height: 180px;
           }
           #logo {
-            width: 68px;
-            height: 68px;
-            margin-top: 56px;
+            width: 28px;
+            height: 28px;
+            margin: 20px;
           }
           #drawer-nav paper-item {
             min-height: 48px;
@@ -286,6 +289,15 @@ export class AppRoot extends mixinBehaviors([AppLocalizeBehavior], PolymerElemen
             selected-language="[[language]]"
             languages="[[_getLanguagesAvailableValues(LANGUAGES_AVAILABLE)]]"
           ></language-view>
+          <login-view
+            name="login"
+            id="logView"
+            dir="ltr"
+            localize="[[localize]]"
+            root-path="[[rootPath]]"
+            selected-language="[[language]]"
+            languages="[[_getLanguagesAvailableValues(LANGUAGES_AVAILABLE)]]"
+          ></login-view>
           <!-- Do not mirror licenses text, as it is not localized. -->
           <licenses-view
             name="licenses"
@@ -294,6 +306,7 @@ export class AppRoot extends mixinBehaviors([AppLocalizeBehavior], PolymerElemen
             localize="[[localize]]"
             root-path="[[rootPath]]"
           ></licenses-view>
+
         </iron-pages>
       </app-header-layout>
 
@@ -336,6 +349,9 @@ export class AppRoot extends mixinBehaviors([AppLocalizeBehavior], PolymerElemen
         <div id="nav-scrollable-container">
           <div id="logo-nav">
             <img src$="[[rootPath]]assets/logo-nav.png" alt="logo" id="logo" />
+            <div class="userinfo-wrapper" on-tap="_showLogin">
+              [[localize('login')]]
+            </div>
           </div>
           <hr class="nav-hr" />
           <paper-listbox id="drawer-nav" selected="{{routeData.page}}" attr-for-selected="name" on-tap="closeDrawer">
@@ -360,6 +376,12 @@ export class AppRoot extends mixinBehaviors([AppLocalizeBehavior], PolymerElemen
               <iron-icon icon="language" slot="item-icon"></iron-icon>
               [[localize('change-language-page-title')]]
             </paper-icon-item>
+
+            <paper-icon-item name="login" class$="[[_computeIsLastVisibleMenuItem(shouldShowQuitButton)]]">
+              <iron-icon icon="language" slot="item-icon"></iron-icon>
+              [[localize('login')]]
+            </paper-icon-item>
+
             <paper-icon-item name="quit" class="last-menu-item" hidden$="[[!shouldShowQuitButton]]">
               <iron-icon icon="cancel" slot="item-icon"></iron-icon>
               [[localize('quit')]]
@@ -380,6 +402,8 @@ export class AppRoot extends mixinBehaviors([AppLocalizeBehavior], PolymerElemen
             <paper-item name="licenses">
               <span>[[localize('licenses-page-title')]]</span>
             </paper-item>
+
+          
           </paper-listbox>
         </div>
       </app-drawer>
@@ -400,6 +424,7 @@ export class AppRoot extends mixinBehaviors([AppLocalizeBehavior], PolymerElemen
         root-path="[[rootPath]]"
         localize="[[localize]]"
       ></server-rename-dialog>
+      
     `;
   }
 
@@ -774,6 +799,10 @@ export class AppRoot extends mixinBehaviors([AppLocalizeBehavior], PolymerElemen
   _computeUseAltAccessMessage(language) {
     // Hack to show an alternative message
     return language === 'fa' && this.platform !== 'ios' && this.platform !== 'osx';
+  }
+
+  _showLogin() {
+    this.$.loginView.open();
   }
 }
 customElements.define(AppRoot.is, AppRoot);

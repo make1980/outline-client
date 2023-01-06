@@ -94,5 +94,9 @@
   "unreachable-server-state": "Unreachable",
   "unsupported-cipher": "Unsupported cipher",
   "update-downloaded": "An updated version of Outline has been downloaded. It will be installed when you restart Outline.",
+  "login":"Login",
+  "register": "Register",
+
+  
   "version": "Version {appVersion}"
 }

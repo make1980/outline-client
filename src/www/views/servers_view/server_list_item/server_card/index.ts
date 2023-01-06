@@ -183,7 +183,14 @@ const getSharedComponents = (element: ServerListItemElement & LitElement) => {
 
     menuElement.show();
   };
-
+  // element.dispatchEvent(
+  //   new CustomEvent(isConnectedState ? ServerListItemEvent.DISCONNECT : ServerListItemEvent.CONNECT, {
+  //     detail: {serverId: server.id},
+  //     bubbles: true,
+  //     composed: true,
+  //   })
+  // ),
+console.log(server.id)
   return {
     messages,
     dispatchers,
@@ -193,7 +200,7 @@ const getSharedComponents = (element: ServerListItemElement & LitElement) => {
           <h2 class="card-metadata-server-name" id="server-name">
             ${messages.serverName}
           </h2>
-          <label class="card-metadata-server-address">${server.address}</label>
+          <label class="card-metadata-server-address">${server.address} ${server.ping}</label>
         </div>
       `,
       menu: html`

@@ -91,5 +91,9 @@
   "undo-button-label": "撤消",
   "unreachable-server-state": "无法连接",
   "update-downloaded": "已下载 Outline 的更新版本。系统会在您重启 Outline 时安装此版本。",
+  "login":"登陆",
+  "register": "注册",
+
+
   "version": "版本 {appVersion}"
 }

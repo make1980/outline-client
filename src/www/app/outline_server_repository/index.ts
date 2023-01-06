@@ -124,6 +124,17 @@ export class OutlineServerRepository implements ServerRepository {
     this.eventQueue.enqueue(new events.ServerAdded(server));
   }
 
+  loginAdd(accessKey: string,name: string) {
+    debugger
+    this.validateAccessKey(accessKey);
+
+    const server = this.createServer(uuidv4(), accessKey, name);
+
+    this.serverById.set(server.id, server);
+    this.storeServers();
+    this.eventQueue.enqueue(new events.ServerAdded(server));
+  }
+
   rename(serverId: string, newName: string) {
     const server = this.serverById.get(serverId);
     if (!server) {
